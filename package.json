@@ -1,0 +1,22 @@
+{
+  "name": "sample-web-app",
+  "version": "1.0.0",
+  "description": "Sample web application for CI/CD pipeline demonstration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["nodejs", "express", "cicd"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  }
+}

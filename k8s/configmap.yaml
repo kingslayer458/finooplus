@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-web-app-config
+  labels:
+    app: sample-web-app
+data:
+  # Application configuration
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  
+  # Feature flags
+  FEATURE_ANALYTICS: "true"
+  FEATURE_DEBUG: "false"

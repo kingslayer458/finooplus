@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Web App - CI/CD Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .info-box {
+            background: #f7f9fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+        }
+        .response.error {
+            background: #ffebee;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 CI/CD Pipeline Demo</h1>
+        <div class="info-box">
+            <h3>Welcome to the Sample Web Application!</h3>
+            <p>This application demonstrates a complete CI/CD pipeline using Git, Jenkins, and Kubernetes.</p>
+        </div>
+        
+        <button class="btn" onclick="checkHealth()">Check Health Status</button>
+        <button class="btn" onclick="getMessage()">Get Message from API</button>
+        
+        <div id="response" class="response"></div>
+        
+        <div class="info-box" style="margin-top: 30px;">
+            <h4>Pipeline Features:</h4>
+            <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                <li>✅ Automated Build on Git Commit</li>
+                <li>✅ Automated Testing</li>
+                <li>✅ Docker Containerization</li>
+                <li>✅ Kubernetes Deployment</li>
+                <li>✅ Health Monitoring</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function checkHealth() {
+            const responseDiv = document.getElementById('response');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                responseDiv.className = 'response';
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = `
+                    <h4>✅ Health Check Successful!</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = `<h4>❌ Error: ${error.message}</h4>`;
+            }
+        }
+
+        async function getMessage() {
+            const responseDiv = document.getElementById('response');
+            try {
+                const response = await fetch('/api/message');
+                const data = await response.json();
+                responseDiv.className = 'response';
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = `
+                    <h4>✅ Message Retrieved!</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = `<h4>❌ Error: ${error.message}</h4>`;
+            }
+        }
+    </script>
+</body>
+</html>
