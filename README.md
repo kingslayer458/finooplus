@@ -61,6 +61,17 @@ finoopluss/
 └── README.md               # This file
 ```
 
+## 🏗️ Architecture Diagram
+
+![CI/CD Pipeline Architecture](image.png)
+
+The diagram illustrates the complete CI/CD workflow:
+- **Developer** pushes code to GitHub
+- **Jenkins** automatically triggers build pipeline
+- **Docker** builds and stores container images
+- **Kubernetes** deploys and manages application pods
+- **Zero-downtime** rolling updates with 3 replicas
+
 ## 💻 Local Development Setup
 
 ### Step 1: Clone the Repository
