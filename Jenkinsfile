@@ -230,8 +230,9 @@ pipeline {
                                 kubectl apply -f k8s/service.yaml --kubeconfig=%KUBECONFIG%
                                 kubectl apply -f k8s/configmap.yaml --kubeconfig=%KUBECONFIG%
                                 
-                                REM Restart deployment to pick up new image
-                                kubectl rollout restart deployment/${K8S_DEPLOYMENT_NAME} -n ${K8S_NAMESPACE} --kubeconfig=%KUBECONFIG%
+                                REM Update deployment with new image tag
+                                echo Updating deployment image to: ${FULL_IMAGE_NAME}
+                                kubectl set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_DEPLOYMENT_NAME}=${FULL_IMAGE_NAME} -n ${K8S_NAMESPACE} --kubeconfig=%KUBECONFIG%
                                 
                                 echo Deployment initiated successfully
                             """
