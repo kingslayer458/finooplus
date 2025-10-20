@@ -4,6 +4,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+docker token
+
 # Environment files
 .env
 .env.local
