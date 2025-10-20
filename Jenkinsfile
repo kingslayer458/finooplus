@@ -87,11 +87,11 @@ pipeline {
                         ).trim()
                         env.GIT_AUTHOR = gitAuthorCmd
                         
-                        echo "✅ Checkout successful"
+                        echo " Checkout successful"
                         echo "Commit: ${env.GIT_COMMIT_MSG}"
                         echo "Author: ${env.GIT_AUTHOR}"
                     } catch (Exception e) {
-                        echo "❌ Checkout failed: ${e.message}"
+                        echo "Checkout failed: ${e.message}"
                         throw e
                     }
                 }
@@ -113,7 +113,7 @@ pipeline {
                             echo Dependencies installed successfully
                         '''
                     } catch (Exception e) {
-                        echo "❌ Build failed: ${e.message}"
+                        echo " Build failed: ${e.message}"
                         throw e
                     }
                 }
@@ -135,7 +135,7 @@ pipeline {
                             echo All tests passed
                         '''
                     } catch (Exception e) {
-                        echo "❌ Tests failed: ${e.message}"
+                        echo " Tests failed: ${e.message}"
                         currentBuild.result = 'UNSTABLE'
                         throw e
                     }
@@ -168,7 +168,7 @@ pipeline {
                             echo Docker image built successfully
                         """
                     } catch (Exception e) {
-                        echo "❌ Docker build failed: ${e.message}"
+                        echo " Docker build failed: ${e.message}"
                         throw e
                     }
                 }
@@ -202,7 +202,7 @@ pipeline {
                             """
                         }
                     } catch (Exception e) {
-                        echo "❌ Docker push failed: ${e.message}"
+                        echo " Docker push failed: ${e.message}"
                         throw e
                     }
                 }
@@ -238,7 +238,7 @@ pipeline {
                             """
                         }
                     } catch (Exception e) {
-                        echo "❌ Kubernetes deployment failed: ${e.message}"
+                        echo " Kubernetes deployment failed: ${e.message}"
                         throw e
                     }
                 }
@@ -269,7 +269,7 @@ pipeline {
                             """
                         }
                     } catch (Exception e) {
-                        echo "❌ Deployment verification failed: ${e.message}"
+                        echo " Deployment verification failed: ${e.message}"
                         throw e
                     }
                 }
@@ -281,7 +281,7 @@ pipeline {
     post {
         success {
             echo '========================================='
-            echo '✅ Pipeline completed successfully!'
+            echo ' Pipeline completed successfully!'
             echo '========================================='
             echo "Build Number: ${BUILD_NUMBER}"
             echo "Docker Image: ${FULL_IMAGE_NAME}"
@@ -295,11 +295,11 @@ pipeline {
         
         failure {
             echo '========================================='
-            echo '❌ Pipeline failed!'
+            echo ' Pipeline failed!'
             echo '========================================='
             
             // Send failure notification
-            // emailext subject: "❌ Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+            // emailext subject: " Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
             //          body: "Build failed. Please check the logs.",
             //          to: "team@example.com"
         }
