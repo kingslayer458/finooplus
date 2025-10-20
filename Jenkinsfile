@@ -309,9 +309,26 @@ pipeline {
             echo '========================================='
             
             // Clean up Docker images to save space (Windows)
-            bat """
-                docker image prune -f
-            """
+            script {
+                try {
+                    bat """
+                        REM Remove dangling images
+                        docker image prune -f
+                        
+                        REM Remove old build number tags (keep only last 3 builds and latest)
+                        FOR /F "skip=3 tokens=2" %%i IN ('docker images kingslayerone/sample-web-app --format "{{.Tag}}" ^| findstr /R "^[0-9]"') DO docker rmi kingslayerone/sample-web-app:%%i 2^>nul || echo Skipped: %%i
+                        
+                        REM Remove old untagged sample-web-app images
+                        FOR /F "tokens=3" %%i IN ('docker images sample-web-app --format "{{.ID}}"') DO docker rmi %%i 2^>nul || echo Skipped: %%i
+                        
+                        REM Show remaining images
+                        echo Remaining images:
+                        docker images kingslayerone/sample-web-app
+                    """
+                } catch (Exception e) {
+                    echo "Cleanup warning: ${e.message}"
+                }
+            }
             
             // Archive artifacts if needed
             // archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
