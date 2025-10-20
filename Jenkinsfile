@@ -21,7 +21,7 @@ pipeline {
     environment {
         // Docker configuration
         DOCKER_REGISTRY = 'docker.io'
-        DOCKER_IMAGE_NAME = 'sample-web-app'
+        DOCKER_IMAGE_NAME = 'kingslayerone/sample-web-app'
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
         
