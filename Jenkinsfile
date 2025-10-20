@@ -74,16 +74,18 @@ pipeline {
                         // Checkout code from Git repository
                         checkout scm
                         
-                        // Get commit information
-                        env.GIT_COMMIT_MSG = sh(
-                            script: 'git log -1 --pretty=%B',
+                        // Get commit information (Windows-compatible)
+                        def gitCommitCmd = bat(
+                            script: '@git log -1 --pretty=%%B',
                             returnStdout: true
                         ).trim()
+                        env.GIT_COMMIT_MSG = gitCommitCmd
                         
-                        env.GIT_AUTHOR = sh(
-                            script: 'git log -1 --pretty=%an',
+                        def gitAuthorCmd = bat(
+                            script: '@git log -1 --pretty=%%an',
                             returnStdout: true
                         ).trim()
+                        env.GIT_AUTHOR = gitAuthorCmd
                         
                         echo "✅ Checkout successful"
                         echo "Commit: ${env.GIT_COMMIT_MSG}"
@@ -104,11 +106,11 @@ pipeline {
                     echo '========================================='
                     
                     try {
-                        // Install Node.js dependencies
-                        sh '''
-                            echo "Installing dependencies..."
+                        // Install Node.js dependencies (Windows)
+                        bat '''
+                            echo Installing dependencies...
                             npm ci
-                            echo "✅ Dependencies installed successfully"
+                            echo Dependencies installed successfully
                         '''
                     } catch (Exception e) {
                         echo "❌ Build failed: ${e.message}"
@@ -126,11 +128,11 @@ pipeline {
                     echo '========================================='
                     
                     try {
-                        // Run tests
-                        sh '''
-                            echo "Running unit tests..."
+                        // Run tests (Windows)
+                        bat '''
+                            echo Running unit tests...
                             npm test
-                            echo "✅ All tests passed"
+                            echo All tests passed
                         '''
                     } catch (Exception e) {
                         echo "❌ Tests failed: ${e.message}"
@@ -156,14 +158,14 @@ pipeline {
                     echo '========================================='
                     
                     try {
-                        // Build Docker image
+                        // Build Docker image (Windows)
                         env.FULL_IMAGE_NAME = "${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
                         
-                        sh """
-                            echo "Building Docker image: ${FULL_IMAGE_NAME}"
+                        bat """
+                            echo Building Docker image: ${FULL_IMAGE_NAME}
                             docker build -t ${FULL_IMAGE_NAME} .
                             docker tag ${FULL_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:latest
-                            echo "✅ Docker image built successfully"
+                            echo Docker image built successfully
                         """
                     } catch (Exception e) {
                         echo "❌ Docker build failed: ${e.message}"
@@ -181,21 +183,21 @@ pipeline {
                     echo '========================================='
                     
                     try {
-                        // Push Docker image to registry
+                        // Push Docker image to registry (Windows)
                         withCredentials([usernamePassword(
                             credentialsId: DOCKER_CREDENTIALS_ID,
                             usernameVariable: 'DOCKER_USERNAME',
                             passwordVariable: 'DOCKER_PASSWORD'
                         )]) {
-                            sh """
-                                echo "Logging in to Docker registry..."
-                                echo \$DOCKER_PASSWORD | docker login ${DOCKER_REGISTRY} -u \$DOCKER_USERNAME --password-stdin
+                            bat """
+                                echo Logging in to Docker registry...
+                                echo %DOCKER_PASSWORD% | docker login ${DOCKER_REGISTRY} -u %DOCKER_USERNAME% --password-stdin
                                 
-                                echo "Pushing image: ${FULL_IMAGE_NAME}"
+                                echo Pushing image: ${FULL_IMAGE_NAME}
                                 docker push ${FULL_IMAGE_NAME}
                                 docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:latest
                                 
-                                echo "✅ Docker image pushed successfully"
+                                echo Docker image pushed successfully
                                 docker logout ${DOCKER_REGISTRY}
                             """
                         }
@@ -215,25 +217,23 @@ pipeline {
                     echo '========================================='
                     
                     try {
-                        // Deploy to Kubernetes using kubectl
+                        // Deploy to Kubernetes using kubectl (Windows)
                         withCredentials([file(
                             credentialsId: K8S_CREDENTIALS_ID,
                             variable: 'KUBECONFIG'
                         )]) {
-                            sh """
-                                echo "Deploying to Kubernetes cluster..."
+                            bat """
+                                echo Deploying to Kubernetes cluster...
                                 
-                                # Apply Kubernetes manifests
-                                kubectl apply -f k8s/deployment.yaml --kubeconfig=\$KUBECONFIG
-                                kubectl apply -f k8s/service.yaml --kubeconfig=\$KUBECONFIG
+                                REM Apply Kubernetes manifests
+                                kubectl apply -f k8s/deployment-local.yaml --kubeconfig=%KUBECONFIG%
+                                kubectl apply -f k8s/service.yaml --kubeconfig=%KUBECONFIG%
+                                kubectl apply -f k8s/configmap.yaml --kubeconfig=%KUBECONFIG%
                                 
-                                # Update image in deployment
-                                kubectl set image deployment/${K8S_DEPLOYMENT_NAME} \
-                                    ${APP_NAME}=${FULL_IMAGE_NAME} \
-                                    -n ${K8S_NAMESPACE} \
-                                    --kubeconfig=\$KUBECONFIG
+                                REM Restart deployment to pick up new image
+                                kubectl rollout restart deployment/${K8S_DEPLOYMENT_NAME} -n ${K8S_NAMESPACE} --kubeconfig=%KUBECONFIG%
                                 
-                                echo "✅ Deployment initiated successfully"
+                                echo Deployment initiated successfully
                             """
                         }
                     } catch (Exception e) {
@@ -252,22 +252,19 @@ pipeline {
                     echo '========================================='
                     
                     try {
-                        // Verify deployment status
+                        // Verify deployment status (Windows)
                         withCredentials([file(
                             credentialsId: K8S_CREDENTIALS_ID,
                             variable: 'KUBECONFIG'
                         )]) {
-                            sh """
-                                echo "Waiting for deployment to be ready..."
-                                kubectl rollout status deployment/${K8S_DEPLOYMENT_NAME} \
-                                    -n ${K8S_NAMESPACE} \
-                                    --timeout=5m \
-                                    --kubeconfig=\$KUBECONFIG
+                            bat """
+                                echo Waiting for deployment to be ready...
+                                kubectl rollout status deployment/${K8S_DEPLOYMENT_NAME} -n ${K8S_NAMESPACE} --timeout=5m --kubeconfig=%KUBECONFIG%
                                 
-                                echo "Checking pod status..."
-                                kubectl get pods -n ${K8S_NAMESPACE} -l app=${APP_NAME} --kubeconfig=\$KUBECONFIG
+                                echo Checking pod status...
+                                kubectl get pods -n ${K8S_NAMESPACE} -l app=${APP_NAME} --kubeconfig=%KUBECONFIG%
                                 
-                                echo "✅ Deployment verified successfully"
+                                echo Deployment verified successfully
                             """
                         }
                     } catch (Exception e) {
@@ -311,9 +308,9 @@ pipeline {
             echo 'Cleaning up...'
             echo '========================================='
             
-            // Clean up Docker images to save space
-            sh """
-                docker image prune -f || true
+            // Clean up Docker images to save space (Windows)
+            bat """
+                docker image prune -f
             """
             
             // Archive artifacts if needed
