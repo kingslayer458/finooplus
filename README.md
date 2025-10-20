@@ -24,9 +24,10 @@ Before starting, ensure you have the following installed:
 - **kubectl**: Kubernetes command-line tool
 - **Jenkins**: CI/CD automation server
 
-### Required Accounts:
-- Docker Hub account (or private registry)
-- Git hosting service (GitHub, GitLab, or Bitbucket)
+
+## 🏗️ Architecture Diagram
+
+![CI/CD Pipeline Architecture](image.png)
 
 ## 📁 Project Structure
 
@@ -49,16 +50,7 @@ finoopluss/
 └── README.md               # This file
 ```
 
-## 🏗️ Architecture Diagram
 
-![CI/CD Pipeline Architecture](image.png)
-
-The diagram illustrates the complete CI/CD workflow:
-- **Developer** pushes code to GitHub
-- **Jenkins** automatically triggers build pipeline
-- **Docker** builds and stores container images
-- **Kubernetes** deploys and manages application pods
-- **Zero-downtime** rolling updates with 3 replicas
 
 ## 💻 Local Development Setup
 
@@ -233,11 +225,6 @@ minikube start
 minikube addons enable metrics-server
 ```
 
-### Option 3: Cloud Provider
-
-- **AWS EKS**: Follow AWS EKS documentation
-- **Azure AKS**: Follow Azure AKS documentation
-- **GCP GKE**: Follow GCP GKE documentation
 
 ### Verify Kubernetes Setup
 
