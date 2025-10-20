@@ -1021,3 +1021,8 @@ You now have a complete CI/CD pipeline that:
 4. Add monitoring tools like Prometheus and Grafana
 
 **Happy Learning! 🚀**
+# Logs from all 3 pods at once
+kubectl logs -l app=sample-web-app --all-containers=true
+
+# Follow logs in real-time from all pods
+kubectl logs -f -l app=sample-web-app --all-containers=true
