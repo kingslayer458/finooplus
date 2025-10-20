@@ -28,7 +28,7 @@ app.get('/api/message', (req, res) => {
 
 // Start server
 const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`running on http://localhost:${PORT}/`);
 });
 
 // Export for testing
