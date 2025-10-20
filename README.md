@@ -12,18 +12,6 @@ This repository contains:
 - Jenkins pipeline configuration (Groovy script)
 - Complete documentation for setup
 
-## 📋 Table of Contents
-
-1. [Prerequisites](#prerequisites)
-2. [Project Structure](#project-structure)
-3. [Local Development Setup](#local-development-setup)
-4. [Jenkins Setup](#jenkins-setup)
-5. [Kubernetes Setup](#kubernetes-setup)
-6. [CI/CD Pipeline Configuration](#cicd-pipeline-configuration)
-7. [Deployment](#deployment)
-8. [Monitoring and Logging](#monitoring-and-logging)
-9. [Troubleshooting](#troubleshooting)
-
 ## 📦 Prerequisites
 
 Before starting, ensure you have the following installed:
